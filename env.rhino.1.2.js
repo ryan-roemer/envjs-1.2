@@ -3,6 +3,9 @@
  * Pure JavaScript Browser Environment
  * By John Resig <http://ejohn.org/> and the Envjs Team
  * Copyright 2008-2010 John Resig, under the MIT License
+ *
+ * Notes: Patched version Envjs 1.2 <http://www.envjs.com/dist/env.rhino.1.2.js>
+ * that should work with jQuery 1.5+.
  */
 
 var Envjs = function(){
@@ -268,6 +271,14 @@ Envjs.loadLink = function(node, href) {
 
 (function(){
 
+/**
+ * @author ariel flesler
+ *    http://flesler.blogspot.com/2008/11/fast-trim-function-for-javascript.html
+ * @param {Object} str
+ */
+function __trim__( str ){
+    return (str || "").replace( /^\s+|\s+$/g, "" );
+}
 
 /*
  *  cookie handling
@@ -354,7 +365,7 @@ Envjs.setCookie = function(url, cookie){
     for(i=0;i<attrs.length;i++){
         index = attrs[i].indexOf("=");
         if(index > -1){
-            name = __trim__(attrs[i].slice(0,index));
+            name = __trim__(attrs[i].slice(0,index)).toLowerCase();
             value = __trim__(attrs[i].slice(index+1));
             if(name=='max-age'){
                 //we'll have to when to check these
@@ -3929,6 +3940,19 @@ __extend__(Element.prototype, {
         // delegate to NamedNodeMap.removeNamedItem
         return this.attributes.removeNamedItem(name);
     },
+    // PATCH: clearAttributes, mergeAttributes
+    // From: https://github.com/orslumen/env-js/commit/c3e702cfa84872782dd40a2c4cd8a4c8f9bac3a3
+    clearAttributes: function() {
+        for(i=0;i< this.attributes.length;i++){
+            this.removeAttribute(this.attributes[i].name);
+        }
+    },
+    mergeAttributes: function(src) {
+        var attrs = src.attributes;
+        for(i=0;i< attrs.length;i++){
+            this.setAttribute(attrs[i].name, attrs[i].value);
+        }
+    },
     getAttributeNode : function getAttributeNode(name) {
         // delegate to NamedNodeMap.getNamedItem
         return this.attributes.getNamedItem(name);
@@ -4035,6 +4059,14 @@ __extend__(Element.prototype, {
     },
     get nodeType(){
         return Node.ELEMENT_NODE;
+    },
+    // PATCH: get value, set value
+    // From: https://github.com/orslumen/env-js/commit/c3e702cfa84872782dd40a2c4cd8a4c8f9bac3a3
+    get value() {
+        return this.__value__ || '';
+    },
+    set value(attr) {
+        this.__value__ = attr;
     },
     get xml() {
         var ret = "",
@@ -5043,7 +5075,7 @@ __extend__(Document.prototype,{
         return { getComputedStyle: function(elem){
             return window.getComputedStyle(elem);
         }};
-    },
+    }
 });
 
 /*
@@ -8018,7 +8050,7 @@ __extend__(HTMLTypeValueInputs.prototype, {
     },
     set name(value){
         this.setAttribute('name',value);
-    },
+    }
 });
 
 
@@ -9423,7 +9455,7 @@ HTMLElement.registerSetAttribute('LINK', 'href', function(node, value) {
 __extend__(HTMLLinkElement.prototype, {
     onload: function(event){
         __eval__(this.getAttribute('onload')||'', this);
-    },
+    }
 });
 
 /**
@@ -11332,7 +11364,7 @@ __extend__(HTMLElement.prototype, {
             $css2properties[this.css2uuid] = new CSS2Properties(this);
         }
         return $css2properties[this.css2uuid];
-    },
+    }
 });
 
 /**
