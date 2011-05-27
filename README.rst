@@ -9,11 +9,11 @@ additions for compatibility with jQuery 1.5+.
 
 Patches:
 
- * Missing ``__trim__`` function definition added to closure.
- * Add toLowerCase() for cookie names.
- * Additional attributes for jQuery 1.5+: ``clearAttributes``,
-   ``mergeAttributes``, ``get value``, ``set value``. Backported from
-   orslumen_'s patches for Envjs 1.3.
+* Missing ``__trim__`` function definition added to closure.
+* Add toLowerCase() for cookie names.
+* Additional attributes for jQuery 1.5+: ``clearAttributes``,
+  ``mergeAttributes``, ``get value``, ``set value``. Backported from
+  orslumen_'s patches for Envjs 1.3.
 
 .. _`Envjs 1.2`: http://www.envjs.com/dist/env.rhino.1.2.js
 .. _orslumen: https://github.com/orslumen/env-js/commit/
